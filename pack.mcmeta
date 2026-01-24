@@ -1,6 +1,9 @@
 {
     "pack": {
-        "pack_format": 48,
-        "description": "A release ready pack for my adventure map"
+        "description": {
+            "text": "A release ready pack for my adventure map"
+        },
+        "min_format": [88, 0],
+        "max_format": [88, 0]
     }
 }
