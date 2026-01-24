@@ -1,4 +1,8 @@
 function a05:magic_wand/release
+function a05:magic_gun/release
+function a05:magic_gun/reload/reload_tick
+function a05:magic_gun/reload/manage_reload_prompt
+function a05:magic_gun/ui/display_ammo
 
 function a05:magic_crafting/check
 function a05:chimney/detect_campfire

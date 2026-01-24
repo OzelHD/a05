@@ -1,0 +1,18 @@
+{
+  "criteria": {
+    "use": {
+      "trigger": "minecraft:using_item",
+      "conditions": {
+        "item": {
+          "items": "minecraft:wooden_hoe",
+          "predicates": {
+            "minecraft:custom_data": {"wand":"gun"}
+          }
+        }
+      }
+    }
+  },
+  "rewards": {
+    "function": "a05:magic_gun/gun"
+  }
+}
