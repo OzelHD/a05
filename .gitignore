@@ -1,0 +1,6 @@
+## Local tooling config
+spyglass.json
+
+## OS/editor cruft
+.DS_Store
+Thumbs.db

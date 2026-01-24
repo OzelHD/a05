@@ -1,0 +1,1 @@
+kill @e[tag=a05_marker_smoke,distance=..1,type=marker]

@@ -1,0 +1,1 @@
+particle soul_fire_flame ~ ~0.5 ~ 0 2 0 0.05 3 force

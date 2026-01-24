@@ -1,0 +1,1 @@
+summon marker ~ ~ ~ {Tags:["a05_marker_smoke"]}

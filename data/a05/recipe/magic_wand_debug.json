@@ -1,0 +1,31 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "key": {
+        "S": "minecraft:stick",
+        "N": "minecraft:nether_star"
+    },
+    "pattern": [
+        "  S",
+        " N ",
+        "S  "
+    ],
+    "result": {
+        "count": 1,
+        "id": "minecraft:stick",
+        "components": {
+            "minecraft:custom_data": "{\"wand\":\"debug\"}",
+            "minecraft:food": {
+                "nutrition": 0,
+                "saturation": 0,
+                "can_always_eat": true
+            },
+            "minecraft:item_name": "Magic wand (Debug)",
+            "minecraft:consumable": {
+                "consume_seconds": 1000000,
+                "animation": "none",
+                "has_consume_particles": false
+            }
+        }
+    }
+}

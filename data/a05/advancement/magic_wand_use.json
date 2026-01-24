@@ -1,0 +1,18 @@
+{
+  "criteria": {
+    "use": {
+      "trigger": "minecraft:using_item",
+      "conditions": {
+        "item": {
+          "items": "minecraft:stick",
+          "predicates": {
+            "minecraft:custom_data": {"wand":"debug"}
+          }
+        }
+      }
+    }
+  },
+  "rewards": {
+    "function": "a05:magic_wand/wand"
+  }
+}
