@@ -8,6 +8,7 @@ scoreboard objectives add xp_saved_flag dummy
 scoreboard objectives add saved_xp_level dummy
 scoreboard objectives add saved_xp_progress dummy
 scoreboard objectives add showdebugmessages dummy
+scoreboard objectives add gun_health dummy
 
 # Give players a starter ammo pool
 execute as @a run scoreboard players set @s ammunition 10

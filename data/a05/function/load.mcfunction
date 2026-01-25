@@ -9,5 +9,6 @@ function a05:sneakdetection/score_setup
 
 
 function a05:debug_particles
+scoreboard objectives setdisplay sidebar gun_health
 
 tellraw @a [{"text":"[a05] ","color":"green"},{"text":"Datapack loaded","color":"gray"}]

@@ -26,3 +26,4 @@ scoreboard objectives remove reload_text_delay
 
 scoreboard objectives remove show_debug_particles
 scoreboard objectives remove showdebugmessages
+scoreboard objectives remove gun_health
