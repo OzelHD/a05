@@ -6,4 +6,4 @@
 
 
 scoreboard objectives add show_debug_particles dummy
-execute as @a run scoreboard players set @s show_debug_particles 1
+execute as @a run scoreboard players set @s show_debug_particles 0
