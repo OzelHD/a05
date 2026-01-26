@@ -1,0 +1,39 @@
+{
+	"type": "minecraft:block",
+	"pools": [
+		{
+			"bonus_rolls": 0,
+			"functions": [],
+			"conditions": [
+				{
+					"condition": "minecraft:survives_explosion"
+				}
+			],
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:sand",
+					"conditions": [],
+					"functions": [
+						{
+							"function": "minecraft:set_components",
+							"components": {
+								"minecraft:can_place_on": [
+									{
+										"blocks": "minecraft:red_concrete"
+									},
+									{
+										"blocks": "minecraft:green_concrete"
+									}
+								]
+							}
+						}
+					]
+				}
+			],
+			"rolls": 1
+		}
+	],
+	"functions": [],
+	"random_sequence": "minecraft:blocks/sand"
+}

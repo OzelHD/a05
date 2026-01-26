@@ -1,0 +1,26 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"category": "equipment",
+	"key": {
+		"#": "minecraft:stick",
+		"X": "minecraft:oak_log"
+	},
+	"pattern": [
+		"X",
+		"#",
+		"#"
+	],
+	"result": {
+		"components": {
+			"minecraft:item_name": "Strong Wooden Shovel",
+			"minecraft:custom_data": "{\"sandbreaker\":\"shovel\"}",
+			"minecraft:can_break": [
+				{
+					"blocks": "minecraft:sand"
+				}
+			]
+		},
+		"count": 1,
+		"id": "minecraft:wooden_shovel"
+	}
+}
