@@ -22,8 +22,8 @@ scoreboard objectives remove xp_saved_flag
 scoreboard objectives remove saved_xp_level
 scoreboard objectives remove saved_xp_progress
 
-scoreboard objectives remove reload_text_delay
-
 scoreboard objectives remove show_debug_particles
 scoreboard objectives remove showdebugmessages
 scoreboard objectives remove gun_health
+
+scoreboard objectives remove op

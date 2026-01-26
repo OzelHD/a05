@@ -8,6 +8,9 @@ data modify storage id:temp components.item_1 set from storage id:temp recipes[-
 data modify storage id:temp components.count_1 set from storage id:temp recipes[-1].ingredients[0].count
 data modify storage id:temp components.result_1 set from storage id:temp recipes[-1].result[0].id
 
+# Store result_1 NBT if present
+execute if data storage id:temp recipes[-1].result[0].nbt run data modify storage id:temp components.result_1_nbt set from storage id:temp recipes[-1].result[0].nbt
+
 data modify storage id:temp components.weight_1 set from storage id:temp recipes[-1].result[0].weight
 data modify storage id:temp components.weight_empty set from storage id:temp recipes[-1].result[0].weight_empty
 
@@ -18,6 +21,9 @@ data modify storage id:temp components.smokey set from storage id:temp recipes[-
 data modify storage id:temp components.item_2 set from storage id:temp recipes[-1].ingredients[1].id
 data modify storage id:temp components.count_2 set from storage id:temp recipes[-1].ingredients[1].count
 data modify storage id:temp components.result_2 set from storage id:temp recipes[-1].result[1].id
+
+# Store result_2 NBT if present
+execute if data storage id:temp recipes[-1].result[1].nbt run data modify storage id:temp components.result_2_nbt set from storage id:temp recipes[-1].result[1].nbt
 
 data modify storage id:temp components.weight_2 set from storage id:temp recipes[-1].result[1].weight
 data modify storage id:temp components.weight_empty set from storage id:temp recipes[-1].result[1].weight_empty
