@@ -14,12 +14,13 @@ execute unless entity @s[tag=wand_hit] if block ~ ~ ~ minecraft:water_cauldron[l
 execute unless entity @s[tag=wand_hit] if block ~ ~ ~ minecraft:water_cauldron[level=2] run function a05:magic_wand/cauldron/l2
 execute unless entity @s[tag=wand_hit] if block ~ ~ ~ minecraft:water_cauldron[level=3] run function a05:magic_wand/cauldron/l3
 
-# Magic remover marker
-execute unless entity @s[tag=wand_hit] if entity @e[tag=a05_marker_smoke,distance=..1,type=marker] run function a05:chimney/kill
-
-# sneakdetection
-execute unless entity @s[tag=wand_hit] if entity @e[tag=a05_sneakdetection,distance=..1,type=marker] run function a05:sneakdetection/center_marker/kill
 
 #Only fire this if the player using the wand has score "op=1"
+# Magic remover marker
+execute unless entity @s[tag=wand_hit] if score @s op matches 1 if entity @e[tag=a05_marker_smoke,distance=..1,type=marker] run function a05:chimney/kill
+
+# sneakdetection
+execute unless entity @s[tag=wand_hit] if score @s op matches 1 if entity @e[tag=a05_sneakdetection,distance=..1,type=marker] run function a05:sneakdetection/center_marker/kill
+
 execute unless entity @s[tag=wand_hit] if score @s op matches 1 if entity @e[tag=HealingStation,distance=..1,type=minecraft:armor_stand] run function a05:magic_healing/kill
 execute unless entity @s[tag=wand_hit] if score @s op matches 1 if entity @e[tag=game_point_markers,distance=..1,type=minecraft:marker] run function a05:chest_gui/menu/objectives/games/kill_markers

@@ -1,4 +1,4 @@
-summon item_display ~ ~ ~ {view_range:0f,width:0f,height:0f,teleport_duration:0,Tags:["ui","new"],Passengers:[{id:"minecraft:chest_minecart",Invulnerable:1b,Tags:["ui","new"],CustomName:{text:"A05 Menu",color:"gold",italic:false},CustomNameVisible:0b,CustomDisplayTile:1b,DisplayState:{Name:"minecraft:barrier"},Passengers:[{id:"minecraft:marker",Tags:["ui","new"]}]}]}
+summon item_display ~ ~ ~ {view_range:0f,width:0f,height:0f,teleport_duration:0,Tags:["ui","new"],Passengers:[{id:"minecraft:chest_minecart",Invulnerable:1b,Tags:["ui","new"],CustomName:{text:"A05 Menu",color:"red",italic:false},CustomNameVisible:0b,CustomDisplayTile:1b,DisplayState:{Name:"minecraft:barrier"},Passengers:[{id:"minecraft:marker",Tags:["ui","new"]}]}]}
 
 # assign a ui-id that is unique to player and minecart stack
 

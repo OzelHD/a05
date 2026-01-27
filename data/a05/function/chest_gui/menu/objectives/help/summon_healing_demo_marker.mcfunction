@@ -1,0 +1,1 @@
+summon minecraft:marker ~ ~ ~ {Tags:["game_point_healing_station","game_point_markers"]}

@@ -1,0 +1,1 @@
+summon minecraft:marker ~ ~ ~ {Tags:["game_point_magic_wand","game_point_markers"]}
