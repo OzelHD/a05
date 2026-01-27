@@ -3,15 +3,20 @@
 
 # /scoreboard players set <zombie UUID or selector> gun_health 10
 
+# Ensure each zombie has a persistent id for its display stack
+execute as @e[tag=magic_gun_target,type=minecraft:zombie] unless score @s zombie_health.id matches 1.. run scoreboard players add .zombie_health_global zombie_health.id 1
+execute as @e[tag=magic_gun_target,type=minecraft:zombie] unless score @s zombie_health.id matches 1.. run scoreboard players operation @s zombie_health.id = .zombie_health_global zombie_health.id
 
-# Only kill the text_display if its associated zombie has moved away (not within 2.5 blocks)
-execute as @e[tag=zombie_health,type=minecraft:text_display] unless entity @e[tag=magic_gun_target,distance=..2.5,type=minecraft:zombie] run kill @s
+# Clear per-tick activity tags
+tag @e[tag=zombie_health_root,type=minecraft:item_display] remove zh_active
+tag @e[tag=zombie_health,type=minecraft:text_display] remove zh_active
 
-# For each zombie, summon or update a text_display
-execute as @e[tag=magic_gun_target,type=minecraft:zombie] at @s unless entity @e[tag=zombie_health,distance=..2.5,type=minecraft:text_display] run summon minecraft:text_display ~ ~2.2 ~ {Tags:["zombie_health"],billboard:"center",background:0,see_through:true,shadow:true,transformation:{scale:[0.7f,0.7f,0.7f],translation:[0.0f,0.0f,0.0f],left_rotation:[1.0f,0.0f,0.0f,0.0f],right_rotation:[1.0f,0.0f,0.0f,0.0f]}}
+# For each zombie, ensure its display exists, anchor it, and update text
+execute as @e[tag=magic_gun_target,type=minecraft:zombie] at @s run function a05:magic_gun/targets/zombie_health_display_one
 
-# Update the text to match the zombie's health value
-execute as @e[tag=magic_gun_target,type=minecraft:zombie] at @s run function a05:magic_gun/targets/zombie_health_helper
+# Kill any leftover/duplicate displays not claimed this tick
+execute as @e[tag=zombie_health_root,type=minecraft:item_display] unless entity @s[tag=zh_active] run kill @s
+execute as @e[tag=zombie_health,type=minecraft:text_display] unless entity @s[tag=zh_active] run kill @s
 
 # Debug: tellraw to all players with zombie health
 # execute as @e[tag=magic_gun_target,type=minecraft:zombie] run tellraw @a [{"text":"Zombie ","color":"gray"},{"selector":"@s","color":"yellow"},{"text":" health: ","color":"gray"},{"score":{"name":"@s","objective":"gun_health"},"color":"green"}]

@@ -25,5 +25,8 @@ scoreboard objectives remove saved_xp_progress
 scoreboard objectives remove show_debug_particles
 scoreboard objectives remove showdebugmessages
 scoreboard objectives remove gun_health
+scoreboard objectives remove zombie_health.id
 
 scoreboard objectives remove op
+
+scoreboard objectives remove healing_wave

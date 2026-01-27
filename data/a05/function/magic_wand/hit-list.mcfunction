@@ -22,3 +22,4 @@ execute unless entity @s[tag=wand_hit] if entity @e[tag=a05_sneakdetection,dista
 
 #Only fire this if the player using the wand has score "op=1"
 execute unless entity @s[tag=wand_hit] if score @s op matches 1 if entity @e[tag=HealingStation,distance=..1,type=minecraft:armor_stand] run function a05:magic_healing/kill
+execute unless entity @s[tag=wand_hit] if score @s op matches 1 if entity @e[tag=game_point_markers,distance=..1,type=minecraft:marker] run function a05:chest_gui/menu/objectives/games/kill_markers

@@ -1,0 +1,1 @@
+give @p music_disc_creator_music_box[minecraft:custom_data={ui:1b}] 1
