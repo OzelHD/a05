@@ -18,6 +18,7 @@ execute as @e[tag=magic_crafting_particle,type=minecraft:area_effect_cloud] at @
 function a05:magic_gun/targets/zombie_health_display
 
 function a05:magic_healing/tick
+function a05:mirror/lamp_detector
 
 function a05:sneakdetection/sneak_release
 

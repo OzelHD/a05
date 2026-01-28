@@ -27,6 +27,9 @@ scoreboard objectives remove show_debug_particles
 scoreboard objectives remove showdebugmessages
 scoreboard objectives remove gun_health
 
+scoreboard objectives remove ui
+scoreboard objectives remove ui.id
+scoreboard objectives remove zombie_health.id
 
 scoreboard objectives remove op
 
