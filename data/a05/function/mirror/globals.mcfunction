@@ -8,3 +8,6 @@ execute unless entity @e[type=minecraft:mannequin,tag=a05_mirror,tag=R] run summ
 # Set mannequin skin by copying stored profile names
 execute as @p[x=-77,y=-15,z=-98,dx=7,dy=10,dz=20] run data modify entity @e[type=minecraft:mannequin,tag=a05_mirror,tag=L,limit=1] profile set from storage a05:mirror profile.left
 execute as @p[x=-77,y=-15,z=-98,dx=7,dy=10,dz=20] run data modify entity @e[type=minecraft:mannequin,tag=a05_mirror,tag=R,limit=1] profile set from storage a05:mirror profile.right
+
+# Mirror player equipment (items only, no extra data)
+execute as @p[x=-77,y=-15,z=-98,dx=7,dy=10,dz=20] run function a05:mirror/sync_equipment
