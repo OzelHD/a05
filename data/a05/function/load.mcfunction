@@ -6,6 +6,7 @@ function a05:magic_crafting/data_setup
 function a05:magic_wand/score_setup
 function a05:magic_gun/score_setup
 function a05:sneakdetection/score_setup
+function a05:mirror/setup
 
 function a05:chest_gui/score_setup
 
