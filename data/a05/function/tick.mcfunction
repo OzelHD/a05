@@ -22,4 +22,6 @@ function a05:mirror/lamp_detector
 
 function a05:sneakdetection/sneak_release
 
+function a05:piano/tick
+
 

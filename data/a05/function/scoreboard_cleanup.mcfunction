@@ -4,6 +4,10 @@
 scoreboard objectives remove wand_hold_timer
 scoreboard objectives remove wand_click
 scoreboard objectives remove mirror
+scoreboard objectives remove piano_press
+scoreboard objectives remove piano_song_time
+scoreboard objectives remove piano_song_id
+scoreboard objectives remove piano_song_active
 
 scoreboard objectives remove gun_hold_timer
 scoreboard objectives remove gun_click
