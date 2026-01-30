@@ -18,7 +18,5 @@ scoreboard objectives add healing_wave dummy
 
 
 function a05:debug_particles
-function a05:piano/kill
 
 tellraw @a [{"text":"[a05] ","color":"green"},{"text":"Datapack loaded","color":"gray"}]
-execute as @p at @p run function a05:piano/summon

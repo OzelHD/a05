@@ -14,3 +14,6 @@ scoreboard players remove @e[type=block_display,tag=piano_key_display,scores={pi
 
 # Preset playback.
 function a05:piano/preset/tick
+
+# Chair seat effect.
+function a05:piano/chair/tick

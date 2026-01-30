@@ -8,6 +8,8 @@ scoreboard objectives remove piano_press
 scoreboard objectives remove piano_song_time
 scoreboard objectives remove piano_song_id
 scoreboard objectives remove piano_song_active
+scoreboard objectives remove piano_move
+scoreboard objectives remove piano_song_tick
 
 scoreboard objectives remove gun_hold_timer
 scoreboard objectives remove gun_click

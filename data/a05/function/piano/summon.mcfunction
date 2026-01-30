@@ -1,6 +1,7 @@
 # Summons a full piano range (F0 to F#4) at the executor position.
 # Summons a full piano range (F0 to F#4) at the executor position.
-execute align xz positioned ~0.5 ~ ~0.5 run summon minecraft:marker ~ ~0.125 ~-0.25 {Tags:["piano_origin"]}
+execute align xz positioned ~0.5 ~ ~0.5 run summon minecraft:marker ~-0.75 ~0.125 ~-0.25 {Tags:["piano_origin"]}
+execute align xz positioned ~0.5 ~ ~0.5 run summon minecraft:marker ~-0.75 ~0.125 ~-0.25 {Tags:["piano_move_from"]}
 
 # Piano casing (adjust block_state if desired).
 execute align xz positioned ~-1.264375 ~-0.06 ~0.2 run summon minecraft:block_display ~ ~0.0625 ~ {Tags:["piano_case"],block_state:{Name:"minecraft:stone"},teleport_duration:0,transformation:{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[2.15625f,0.313f,0.71875f]}}
