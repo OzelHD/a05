@@ -1,5 +1,7 @@
 #backup
 
+# Experience (intro)
+
 execute if score #piano_song_time piano_song_time matches 0 as @e[type=block_display,tag=piano_note_cs3,limit=1] at @s run function a05:piano/press_key
 execute if score #piano_song_time piano_song_time matches 0 as @e[type=block_display,tag=piano_note_fs2,limit=1] at @s run function a05:piano/press_key
 
@@ -173,3 +175,82 @@ execute if score #piano_song_time piano_song_time matches 124 as @e[type=block_d
 execute if score #piano_song_time piano_song_time matches 124 as @e[type=block_display,tag=piano_note_fs3,limit=1] at @s run function a05:piano/press_key
 
 execute if score #piano_song_time piano_song_time matches 126 as @e[type=block_display,tag=piano_note_a2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 128 as @e[type=block_display,tag=piano_note_cs3,limit=1] at @s run function a05:piano/press_key
+execute if score #piano_song_time piano_song_time matches 128 as @e[type=block_display,tag=piano_note_fs2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 129 as @e[type=block_display,tag=piano_note_a3,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 130 as @e[type=block_display,tag=piano_note_cs2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 131 as @e[type=block_display,tag=piano_note_a3,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 132 as @e[type=block_display,tag=piano_note_cs3,limit=1] at @s run function a05:piano/press_key
+execute if score #piano_song_time piano_song_time matches 132 as @e[type=block_display,tag=piano_note_fs2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 133 as @e[type=block_display,tag=piano_note_a3,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 134 as @e[type=block_display,tag=piano_note_cs2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 135 as @e[type=block_display,tag=piano_note_a3,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 136 as @e[type=block_display,tag=piano_note_cs3,limit=1] at @s run function a05:piano/press_key
+execute if score #piano_song_time piano_song_time matches 136 as @e[type=block_display,tag=piano_note_fs2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 137 as @e[type=block_display,tag=piano_note_a3,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 138 as @e[type=block_display,tag=piano_note_cs2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 139 as @e[type=block_display,tag=piano_note_a3,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 140 as @e[type=block_display,tag=piano_note_cs3,limit=1] at @s run function a05:piano/press_key
+execute if score #piano_song_time piano_song_time matches 140 as @e[type=block_display,tag=piano_note_fs2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 141 as @e[type=block_display,tag=piano_note_a3,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 142 as @e[type=block_display,tag=piano_note_cs2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 143 as @e[type=block_display,tag=piano_note_a3,limit=1] at @s run function a05:piano/press_key
+
+
+
+
+execute if score #piano_song_time piano_song_time matches 144 as @e[type=block_display,tag=piano_note_cs3,limit=1] at @s run function a05:piano/press_key
+execute if score #piano_song_time piano_song_time matches 144 as @e[type=block_display,tag=piano_note_a2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 145 as @e[type=block_display,tag=piano_note_a3,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 146 as @e[type=block_display,tag=piano_note_cs2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 147 as @e[type=block_display,tag=piano_note_a3,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 148 as @e[type=block_display,tag=piano_note_cs3,limit=1] at @s run function a05:piano/press_key
+execute if score #piano_song_time piano_song_time matches 148 as @e[type=block_display,tag=piano_note_a2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 149 as @e[type=block_display,tag=piano_note_a3,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 150 as @e[type=block_display,tag=piano_note_cs2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 151 as @e[type=block_display,tag=piano_note_a3,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 152 as @e[type=block_display,tag=piano_note_cs3,limit=1] at @s run function a05:piano/press_key
+execute if score #piano_song_time piano_song_time matches 152 as @e[type=block_display,tag=piano_note_a2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 153 as @e[type=block_display,tag=piano_note_a3,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 154 as @e[type=block_display,tag=piano_note_cs2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 155 as @e[type=block_display,tag=piano_note_a3,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 156 as @e[type=block_display,tag=piano_note_cs3,limit=1] at @s run function a05:piano/press_key
+execute if score #piano_song_time piano_song_time matches 156 as @e[type=block_display,tag=piano_note_a2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 157 as @e[type=block_display,tag=piano_note_a3,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 158 as @e[type=block_display,tag=piano_note_cs2,limit=1] at @s run function a05:piano/press_key
+
+execute if score #piano_song_time piano_song_time matches 159 as @e[type=block_display,tag=piano_note_a3,limit=1] at @s run function a05:piano/press_key
+
+
+# Stop after the last note.
+execute if score #piano_song_time piano_song_time matches 160 run function a05:piano/preset/stop

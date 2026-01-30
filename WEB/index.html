@@ -274,7 +274,12 @@
       border-left: 1px solid rgba(0,0,0,0.06);
     }
 
-    .tick.bar-start { border-left: 2px solid var(--accent); color: var(--accent); }
+    .tick.bar-start { border-left: 3px solid var(--accent); color: var(--accent); font-weight: 600; }
+    .tick.start {
+      background: rgba(0,109,119,0.14);
+      color: var(--accent);
+      font-weight: 600;
+    }
 
     .staff-wrap {
       overflow-x: auto;
@@ -334,7 +339,7 @@
       position: relative;
     }
 
-    .cell.bar-start { border-left: 2px solid var(--accent); }
+    .cell.bar-start { border-left: 3px solid var(--accent); box-shadow: inset 1px 0 0 rgba(0,109,119,0.35); }
     .cell.beat { background: rgba(0,109,119,0.05); }
 
     .cell.on::after {
@@ -385,6 +390,10 @@
         <div class="hint-inline" id="barsHint">Total ticks: 128</div>
       </div>
       <div class="field">
+        <label for="startTick">Start tick (click tick header to set)</label>
+        <input type="number" id="startTick" min="0" value="0" />
+      </div>
+      <div class="field">
         <label for="scoreHolder">Score holder</label>
         <input type="text" id="scoreHolder" value="#piano_song_time" />
       </div>
@@ -399,6 +408,10 @@
       <div class="toggle">
         <input type="checkbox" id="autoTag" checked />
         <label for="autoTag">Auto-tag from label (C#3 -> piano_note_cs3)</label>
+      </div>
+      <div class="toggle">
+        <input type="checkbox" id="loopToggle" />
+        <label for="loopToggle">Repeat at end (jump back to start tick)</label>
       </div>
       <div class="hint">Use the # button on a row to toggle a sharp. Adjust labels/tags once at the beginning so the mapping matches your naming.</div>
 
@@ -462,6 +475,13 @@
         <button class="btn secondary" id="copyOutput">Copy to clipboard</button>
         <button class="btn ghost" id="downloadOutput">Download .mcfunction</button>
       </div>
+
+      <div class="section-title">Import mcfunction</div>
+      <textarea id="importInput" placeholder="Paste existing mcfunction lines here..."></textarea>
+      <div class="actions">
+        <button class="btn ghost" id="importBtn">Import to grid</button>
+        <button class="btn ghost" id="clearImport">Clear import</button>
+      </div>
     </section>
   </main>
 
@@ -471,6 +491,9 @@
     const state = {
       bars: 8,
       ticksPerBar: 16,
+      startTick: 0,
+      scrollLeft: 0,
+      loopEnabled: false,
       autoTag: true,
       scoreHolder: "#piano_song_time",
       scoreObjective: "piano_song_time",
@@ -485,6 +508,8 @@
       bars: document.getElementById("bars"),
       barsRange: document.getElementById("barsRange"),
       barsHint: document.getElementById("barsHint"),
+      startTick: document.getElementById("startTick"),
+      loopToggle: document.getElementById("loopToggle"),
       scoreHolder: document.getElementById("scoreHolder"),
       scoreObjective: document.getElementById("scoreObjective"),
       functionPath: document.getElementById("functionPath"),
@@ -500,6 +525,9 @@
       highCount: document.getElementById("highCount"),
       lowCount: document.getElementById("lowCount"),
       output: document.getElementById("output"),
+      importInput: document.getElementById("importInput"),
+      importBtn: document.getElementById("importBtn"),
+      clearImport: document.getElementById("clearImport"),
       addHigh: document.getElementById("addHigh"),
       addLow: document.getElementById("addLow"),
       clearAll: document.getElementById("clearAll"),
@@ -508,11 +536,19 @@
       downloadOutput: document.getElementById("downloadOutput")
     };
 
+    const scrollState = {
+      syncing: false,
+      saveTimer: null
+    };
+
     function saveState() {
       try {
         const payload = {
           bars: state.bars,
           ticksPerBar: state.ticksPerBar,
+          startTick: state.startTick,
+          scrollLeft: state.scrollLeft,
+          loopEnabled: state.loopEnabled,
           autoTag: state.autoTag,
           scoreHolder: state.scoreHolder,
           scoreObjective: state.scoreObjective,
@@ -547,8 +583,15 @@
       if (!data || typeof data !== "object") return false;
 
       const bars = Number(data.bars);
-      state.bars = Number.isFinite(bars) && bars > 0 ? Math.min(Math.max(1, bars), 256) : state.bars;
+      state.bars = Number.isFinite(bars) && bars > 0 ? Math.min(Math.max(1, bars), 1024) : state.bars;
       state.ticksPerBar = data.ticksPerBar === 16 ? 16 : state.ticksPerBar;
+      const startTick = Number(data.startTick);
+      state.startTick = Number.isFinite(startTick) && startTick >= 0 ? startTick : 0;
+      const maxTick = state.bars * state.ticksPerBar - 1;
+      if (state.startTick > maxTick) state.startTick = Math.max(0, maxTick);
+      const scrollLeft = Number(data.scrollLeft);
+      state.scrollLeft = Number.isFinite(scrollLeft) && scrollLeft >= 0 ? scrollLeft : 0;
+      state.loopEnabled = !!data.loopEnabled;
       state.autoTag = !!data.autoTag;
       state.scoreHolder = typeof data.scoreHolder === "string" ? data.scoreHolder : state.scoreHolder;
       state.scoreObjective = typeof data.scoreObjective === "string" ? data.scoreObjective : state.scoreObjective;
@@ -586,10 +629,12 @@
 
       elements.bars.value = state.bars;
       elements.barsRange.value = state.bars;
+      elements.startTick.value = state.startTick;
       elements.scoreHolder.value = state.scoreHolder;
       elements.scoreObjective.value = state.scoreObjective;
       elements.functionPath.value = state.functionPath;
       elements.autoTag.checked = state.autoTag;
+      elements.loopToggle.checked = state.loopEnabled;
       return true;
     }
 
@@ -601,6 +646,16 @@
       const octave = match[3];
       return `piano_note_${letter}${sharp}${octave}`;
     }
+
+    function normalizeLabel(label) {
+      const match = label.trim().match(/^([A-Ga-g])(#?)(-?\d+)$/);
+      if (!match) return null;
+      const letter = match[1].toUpperCase();
+      const sharp = match[2] ? "#" : "";
+      const octave = match[3];
+      return `${letter}${sharp}${octave}`;
+    }
+
 
     function toggleSharp(label) {
       const match = label.trim().match(/^([A-Ga-g])(#?)(-?\d+)$/);
@@ -657,8 +712,12 @@
       container.innerHTML = "";
       for (let tick = 0; tick < totalTicks; tick++) {
         const span = document.createElement("div");
-        span.className = "tick" + (tick % state.ticksPerBar === 0 ? " bar-start" : "");
+        const classes = ["tick"];
+        if (tick % state.ticksPerBar === 0) classes.push("bar-start");
+        if (tick === state.startTick) classes.push("start");
+        span.className = classes.join(" ");
         span.textContent = tick + 1;
+        span.dataset.tick = tick;
         container.appendChild(span);
       }
     }
@@ -702,6 +761,9 @@
       const totalTicks = state.bars * state.ticksPerBar;
       const orderedNotes = [...state.highNotes, ...state.lowNotes];
       let lastTick = -1;
+      lines.push(
+        `execute if score ${state.scoreHolder} ${state.scoreObjective} matches 0 run scoreboard players set ${state.scoreHolder} ${state.scoreObjective} ${state.startTick}`
+      );
       for (let tick = 0; tick < totalTicks; tick++) {
         for (const note of orderedNotes) {
           const set = state.notes[note.id];
@@ -709,7 +771,7 @@
           const tag = note.tag.trim();
           if (!tag) continue;
           lines.push(
-            `execute if score ${state.scoreHolder} ${state.scoreObjective} matches ${tick} as @e[type=block_display,tag=${tag},limit=1] at @s run function ${state.functionPath}`
+            `execute if score ${state.scoreHolder} ${state.scoreObjective} matches ${tick} as @e[distance=..100,tag=${tag},limit=1,type=block_display] at @s run function ${state.functionPath}`
           );
           if (tick > lastTick) lastTick = tick;
         }
@@ -717,9 +779,15 @@
       if (lastTick >= 0) {
         lines.push("");
         lines.push("# Stop after the last note.");
-        lines.push(
-          `execute if score ${state.scoreHolder} ${state.scoreObjective} matches ${lastTick + 1} run function a05:piano/preset/stop`
-        );
+        if (state.loopEnabled) {
+          lines.push(
+            `execute if score ${state.scoreHolder} ${state.scoreObjective} matches ${lastTick + 1} run scoreboard players set ${state.scoreHolder} ${state.scoreObjective} ${state.startTick}`
+          );
+        } else {
+          lines.push(
+            `execute if score ${state.scoreHolder} ${state.scoreObjective} matches ${lastTick + 1} run function a05:piano/preset/stop`
+          );
+        }
       }
       elements.output.value = lines.join("\n");
       updateCounts();
@@ -729,6 +797,8 @@
     function renderAll() {
       elements.bars.value = state.bars;
       elements.barsRange.value = state.bars;
+      elements.startTick.max = Math.max(0, state.bars * state.ticksPerBar - 1);
+      elements.startTick.value = state.startTick;
       elements.barsHint.textContent = `Total ticks: ${state.bars * state.ticksPerBar}`;
       renderMapping("highNotes", elements.highMap);
       renderMapping("lowNotes", elements.lowMap);
@@ -739,6 +809,7 @@
       renderGrid("highNotes", elements.highGrid);
       renderGrid("lowNotes", elements.lowGrid);
       updateOutput();
+      syncAllScroll(state.scrollLeft);
     }
 
     function handleMapInput(hand, event) {
@@ -798,11 +869,169 @@
       updateOutput();
     }
 
+    function clearPlacedNotes() {
+      Object.keys(state.notes).forEach(id => state.notes[id] = new Set());
+    }
+
+    function buildTagMaps() {
+      const toMap = list => {
+        const map = new Map();
+        list.forEach(note => {
+          const tag = note.tag.trim().toLowerCase();
+          if (!tag) return;
+          if (!map.has(tag)) map.set(tag, []);
+          map.get(tag).push(note.id);
+        });
+        return map;
+      };
+      return {
+        high: toMap(state.highNotes),
+        low: toMap(state.lowNotes)
+      };
+    }
+
+    function parseImport(text) {
+      const entries = [];
+      let maxTick = -1;
+      let startTick = null;
+      const lines = text.split(/\r?\n/);
+      for (const raw of lines) {
+        const line = raw.trim();
+        if (!line) continue;
+
+        const startMatch = line.match(/scoreboard players set\s+(\S+)\s+(\S+)\s+(-?\d+)/);
+        if (startMatch) {
+          const value = Number(startMatch[3]);
+          if (Number.isFinite(value)) startTick = value;
+        }
+
+        const tickMatch = line.match(/matches\s+(-?\d+)/);
+        const tagMatch = line.match(/tag=([^,\]]+)/);
+        if (!tickMatch || !tagMatch) continue;
+        const tick = Number(tickMatch[1]);
+        const tag = tagMatch[1].trim().toLowerCase();
+        if (!Number.isFinite(tick) || !tag) continue;
+        entries.push({ tick, tag });
+        if (tick > maxTick) maxTick = tick;
+      }
+      return { entries, maxTick, startTick };
+    }
+
+    function tagToLabel(tag) {
+      const match = tag.match(/^piano_note_([a-g])([s]?)(-?\d+)$/i);
+      if (!match) return null;
+      const letter = match[1].toUpperCase();
+      const sharp = match[2] ? "#" : "";
+      const octave = match[3];
+      return `${letter}${sharp}${octave}`;
+    }
+
+    function findNoteByLabel(list, label) {
+      const target = label.toUpperCase();
+      return list.find(note => note.label.trim().toUpperCase() === target) || null;
+    }
+
+    function findNoteById(id) {
+      return state.highNotes.find(note => note.id === id) || state.lowNotes.find(note => note.id === id) || null;
+    }
+
+    function importMcfunction(text) {
+      const parsed = parseImport(text);
+      if (!parsed.entries.length) return;
+
+      if (parsed.maxTick >= 0) {
+        const neededBars = Math.min(1024, Math.max(1, Math.ceil((parsed.maxTick + 1) / state.ticksPerBar)));
+        state.bars = neededBars;
+      }
+
+      if (parsed.startTick !== null) {
+        const maxTick = state.bars * state.ticksPerBar - 1;
+        state.startTick = Math.min(Math.max(0, parsed.startTick), Math.max(0, maxTick));
+      }
+
+      clearPlacedNotes();
+      const tagMaps = buildTagMaps();
+      parsed.entries.forEach(entry => {
+        const highIds = tagMaps.high.get(entry.tag);
+        const lowIds = tagMaps.low.get(entry.tag);
+        let targetId = null;
+        if (highIds && lowIds && (entry.tag === "piano_note_c2" || entry.tag === "piano_note_cs2")) {
+          targetId = highIds[0];
+        } else if (highIds) {
+          targetId = highIds[0];
+        } else if (lowIds) {
+          targetId = lowIds[0];
+        }
+        if (!targetId) {
+          const label = tagToLabel(entry.tag);
+          if (label) {
+            const highMatch = findNoteByLabel(state.highNotes, label);
+            const lowMatch = findNoteByLabel(state.lowNotes, label);
+            let chosen = null;
+            if (highMatch && lowMatch) {
+              chosen = highMatch;
+            } else {
+              chosen = highMatch || lowMatch;
+            }
+
+            if (!chosen && label.includes("#")) {
+              const naturalLabel = label.replace("#", "");
+              const highNatural = findNoteByLabel(state.highNotes, naturalLabel);
+              const lowNatural = findNoteByLabel(state.lowNotes, naturalLabel);
+              if (highNatural && lowNatural) {
+                chosen = highNatural;
+              } else {
+                chosen = highNatural || lowNatural;
+              }
+              if (chosen) {
+                chosen.label = label;
+              }
+            }
+
+            if (chosen) {
+              const desiredTag = state.autoTag && !chosen.manualTag ? labelToTag(chosen.label) : entry.tag;
+              if (desiredTag && chosen.tag.trim().toLowerCase() !== desiredTag.toLowerCase()) {
+                chosen.tag = desiredTag;
+                if (!(state.autoTag && !chosen.manualTag)) {
+                  chosen.manualTag = true;
+                }
+              }
+              const map = state.highNotes.includes(chosen) ? tagMaps.high : tagMaps.low;
+              const tagKey = desiredTag.toLowerCase();
+              if (tagKey) {
+                if (!map.has(tagKey)) map.set(tagKey, []);
+                if (!map.get(tagKey).includes(chosen.id)) map.get(tagKey).push(chosen.id);
+              }
+              targetId = chosen.id;
+            }
+          }
+        }
+        if (!targetId) return;
+        const noteObj = findNoteById(targetId);
+        if (noteObj && entry.tag.includes("piano_note_") && entry.tag.includes("s")) {
+          const sharpLabel = tagToLabel(entry.tag);
+          if (sharpLabel && !noteObj.label.includes("#")) {
+            noteObj.label = sharpLabel;
+            if (state.autoTag && !noteObj.manualTag) {
+              noteObj.tag = labelToTag(sharpLabel);
+            } else {
+              noteObj.tag = entry.tag;
+              noteObj.manualTag = true;
+            }
+          }
+        }
+        if (!state.notes[targetId]) state.notes[targetId] = new Set();
+        state.notes[targetId].add(entry.tick);
+      });
+
+      renderAll();
+    }
+
     function init() {
       const loaded = loadState();
       if (!loaded) {
         const highBottomToTop = [
-          "C2", "D2", "E2", "F2",
+          "C2", "D2", "E2", "F4",
           "G3", "A3", "B3",
           "C3", "D3", "E3", "F3",
           "G4", "A4", "B4",
@@ -810,8 +1039,8 @@
         ];
         const lowTopToBottom = [
           "C2", "B2", "A2", "G2",
-          "F1", "E1", "D1", "C1",
-          "B1", "A1", "G1", "F0"
+          "F2", "E1", "D1", "C1",
+          "B1", "A1", "G1", "F1"
         ];
         highBottomToTop.slice().reverse().forEach(note => addNote("highNotes", note));
         lowTopToBottom.forEach(note => addNote("lowNotes", note));
@@ -822,13 +1051,30 @@
     function setBars(value) {
       const safe = Number.isFinite(value) && value > 0 ? Math.min(Math.max(1, value), 1024) : 1;
       state.bars = safe;
+      const maxTick = state.bars * state.ticksPerBar - 1;
+      if (state.startTick > maxTick) state.startTick = Math.max(0, maxTick);
       elements.bars.value = safe;
       elements.barsRange.value = safe;
       renderAll();
     }
 
+    function setStartTick(value) {
+      const totalTicks = state.bars * state.ticksPerBar;
+      const maxTick = Math.max(0, totalTicks - 1);
+      const raw = Number.isFinite(value) ? Math.floor(value) : 0;
+      state.startTick = Math.min(Math.max(0, raw), maxTick);
+      renderAll();
+    }
+
     elements.bars.addEventListener("input", event => setBars(Number(event.target.value)));
     elements.barsRange.addEventListener("input", event => setBars(Number(event.target.value)));
+    elements.startTick.addEventListener("input", event => setStartTick(Number(event.target.value)));
+
+    function handleTimelineClick(event) {
+      const tickEl = event.target.closest(".tick");
+      if (!tickEl || tickEl.dataset.tick === undefined) return;
+      setStartTick(Number(tickEl.dataset.tick));
+    }
 
     elements.scoreHolder.addEventListener("input", event => {
       state.scoreHolder = event.target.value.trim() || "#piano_song_time";
@@ -842,6 +1088,11 @@
 
     elements.functionPath.addEventListener("input", event => {
       state.functionPath = event.target.value.trim() || "a05:piano/press_key";
+      updateOutput();
+    });
+
+    elements.loopToggle.addEventListener("change", event => {
+      state.loopEnabled = event.target.checked;
       updateOutput();
     });
 
@@ -861,6 +1112,8 @@
     elements.lowMap.addEventListener("input", event => handleMapInput("lowNotes", event));
     elements.highMap.addEventListener("click", event => handleMapClick("highNotes", event));
     elements.lowMap.addEventListener("click", event => handleMapClick("lowNotes", event));
+    elements.highTimeline.addEventListener("click", handleTimelineClick);
+    elements.lowTimeline.addEventListener("click", handleTimelineClick);
     elements.highGrid.addEventListener("click", handleGridClick);
     elements.lowGrid.addEventListener("click", handleGridClick);
 
@@ -875,7 +1128,7 @@
     });
 
     elements.clearAll.addEventListener("click", () => {
-      Object.keys(state.notes).forEach(id => state.notes[id] = new Set());
+      clearPlacedNotes();
       renderAll();
     });
 
@@ -910,21 +1163,48 @@
       URL.revokeObjectURL(link.href);
     });
 
+    elements.importBtn.addEventListener("click", () => {
+      importMcfunction(elements.importInput.value || "");
+    });
+
+    elements.clearImport.addEventListener("click", () => {
+      elements.importInput.value = "";
+    });
+
     function setupScrollSyncAll() {
       const wraps = Array.from(document.querySelectorAll(".scroll-wrap"));
       if (wraps.length < 2) return;
-      let isSyncing = false;
       wraps.forEach(wrap => {
         wrap.addEventListener("scroll", () => {
-          if (isSyncing) return;
-          isSyncing = true;
+          if (scrollState.syncing) return;
+          scrollState.syncing = true;
           const left = wrap.scrollLeft;
           wraps.forEach(other => {
             if (other !== wrap) other.scrollLeft = left;
           });
-          isSyncing = false;
+          scrollState.syncing = false;
+          queueScrollSave(left);
         });
       });
+    }
+
+    function queueScrollSave(left) {
+      state.scrollLeft = left;
+      if (scrollState.saveTimer) clearTimeout(scrollState.saveTimer);
+      scrollState.saveTimer = setTimeout(() => {
+        saveState();
+        scrollState.saveTimer = null;
+      }, 150);
+    }
+
+    function syncAllScroll(left) {
+      const wraps = Array.from(document.querySelectorAll(".scroll-wrap"));
+      if (!wraps.length) return;
+      scrollState.syncing = true;
+      wraps.forEach(wrap => {
+        wrap.scrollLeft = left;
+      });
+      scrollState.syncing = false;
     }
 
     init();
