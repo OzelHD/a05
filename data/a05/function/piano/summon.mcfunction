@@ -484,12 +484,3 @@ execute align xz positioned ~-1.08203125 ~ ~0.53125 run summon minecraft:interac
 execute align xz positioned ~-1.08203125 ~ ~0.59375 run summon minecraft:interaction ~ ~0.1875 ~ {Tags:["piano_key","piano_key_interaction","piano_note_ds4"],width:0.0625f,height:0.25f}
 execute align xz positioned ~-1.08203125 ~ ~0.65625 run summon minecraft:interaction ~ ~0.1875 ~ {Tags:["piano_key","piano_key_interaction","piano_note_ds4"],width:0.0625f,height:0.25f}
 execute align xz positioned ~-1.08203125 ~ ~0.71875 run summon minecraft:interaction ~ ~0.1875 ~ {Tags:["piano_key","piano_key_interaction","piano_note_ds4"],width:0.0625f,height:0.25f}
-
-# Black key fs4
-execute align xz positioned ~-0.609375 ~ ~0.6875 run summon minecraft:block_display ~ ~0.1875 ~-0.25 {Tags:["piano_key","piano_key_display","piano_key_black_display","piano_note_fs4"],block_state:{Name:"minecraft:black_concrete"},teleport_duration:0,transformation:{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.0625f,0.25f,0.3125f]}}
-execute align xz positioned ~-0.578125 ~ ~0.46875 run summon minecraft:interaction ~ ~0.1875 ~ {Tags:["piano_key","piano_key_interaction","piano_note_fs4"],width:0.0625f,height:0.25f}
-execute align xz positioned ~-0.578125 ~ ~0.53125 run summon minecraft:interaction ~ ~0.1875 ~ {Tags:["piano_key","piano_key_interaction","piano_note_fs4"],width:0.0625f,height:0.25f}
-execute align xz positioned ~-0.578125 ~ ~0.59375 run summon minecraft:interaction ~ ~0.1875 ~ {Tags:["piano_key","piano_key_interaction","piano_note_fs4"],width:0.0625f,height:0.25f}
-execute align xz positioned ~-0.578125 ~ ~0.65625 run summon minecraft:interaction ~ ~0.1875 ~ {Tags:["piano_key","piano_key_interaction","piano_note_fs4"],width:0.0625f,height:0.25f}
-execute align xz positioned ~-0.578125 ~ ~0.71875 run summon minecraft:interaction ~ ~0.1875 ~ {Tags:["piano_key","piano_key_interaction","piano_note_fs4"],width:0.0625f,height:0.25f}
-

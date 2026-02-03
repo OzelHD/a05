@@ -176,9 +176,19 @@
 
     .map-row {
       display: grid;
-      grid-template-columns: 34px 1fr 1.2fr 34px;
+      grid-template-columns: 22px 34px 1fr 1.2fr 34px;
       gap: 8px;
       align-items: center;
+    }
+
+    .map-row.disabled {
+      opacity: 0.45;
+    }
+
+    .map-enabled {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
     }
 
     .mini {
@@ -365,7 +375,7 @@
 
     @media (max-width: 640px) {
       body { padding: 24px 16px 40px; }
-      .map-row { grid-template-columns: 30px 1fr 1fr 30px; }
+      .map-row { grid-template-columns: 22px 30px 1fr 1fr 30px; }
       .timeline-shell,
       .staff-shell { grid-template-columns: 60px minmax(0, 1fr); }
       .range-row { grid-template-columns: 1fr 70px; }
@@ -413,7 +423,7 @@
         <input type="checkbox" id="loopToggle" />
         <label for="loopToggle">Repeat at end (jump back to start tick)</label>
       </div>
-      <div class="hint">Use the # button on a row to toggle a sharp. Adjust labels/tags once at the beginning so the mapping matches your naming.</div>
+      <div class="hint">Use the # button on a row to toggle a sharp. Use the checkbox to disable rows you do not need. Adjust labels/tags once at the beginning so the mapping matches your naming.</div>
 
       <div class="section-title">High Hand Mapping</div>
       <div class="map-list" id="highMap"></div>
@@ -611,7 +621,8 @@
             id: noteId,
             label: typeof item.label === "string" ? item.label : "C3",
             tag: typeof item.tag === "string" ? item.tag : "",
-            manualTag: !!item.manualTag
+            manualTag: !!item.manualTag,
+            enabled: item.enabled !== false
           };
           target.push(note);
           const savedTicks = data.notes && data.notes[noteId];
@@ -636,6 +647,69 @@
       elements.autoTag.checked = state.autoTag;
       elements.loopToggle.checked = state.loopEnabled;
       return true;
+    }
+
+    const F_ORDER = ["F", "E", "D#", "D", "C#", "C", "B", "A#", "A", "G#", "G", "F#"];
+    const F_ORDER_INDEX = Object.fromEntries(F_ORDER.map((name, index) => [name, index]));
+
+    function parseNoteLabel(label) {
+      const match = label.trim().match(/^([A-Ga-g])(#?)(-?\d+)$/);
+      if (!match) return null;
+      const letter = match[1].toUpperCase();
+      const sharp = match[2] ? "#" : "";
+      const octave = Number(match[3]);
+      if (!Number.isFinite(octave)) return null;
+      const name = `${letter}${sharp}`;
+      const order = F_ORDER_INDEX[name];
+      if (order === undefined) return null;
+      return { name, octave, order };
+    }
+
+    function noteRank(note) {
+      return (-note.octave) * 12 + note.order;
+    }
+
+    function nextLower(note) {
+      if (note.order < F_ORDER.length - 1) {
+        return { name: F_ORDER[note.order + 1], octave: note.octave, order: note.order + 1 };
+      }
+      return { name: F_ORDER[0], octave: note.octave - 1, order: 0 };
+    }
+
+    function nextHigher(note) {
+      if (note.order > 0) {
+        return { name: F_ORDER[note.order - 1], octave: note.octave, order: note.order - 1 };
+      }
+      return { name: F_ORDER[F_ORDER.length - 1], octave: note.octave + 1, order: F_ORDER.length - 1 };
+    }
+
+    function noteToLabel(note) {
+      return `${note.name}${note.octave}`;
+    }
+
+    function buildNoteRange(startLabel, endLabel) {
+      const start = parseNoteLabel(startLabel);
+      const end = parseNoteLabel(endLabel);
+      if (!start || !end) return [];
+      const list = [];
+      const startRank = noteRank(start);
+      const endRank = noteRank(end);
+      if (startRank <= endRank) {
+        let current = start;
+        list.push(noteToLabel(current));
+        while (!(current.name === end.name && current.octave === end.octave)) {
+          current = nextLower(current);
+          list.push(noteToLabel(current));
+        }
+        return list;
+      }
+      let current = start;
+      list.push(noteToLabel(current));
+      while (!(current.name === end.name && current.octave === end.octave)) {
+        current = nextHigher(current);
+        list.push(noteToLabel(current));
+      }
+      return list;
     }
 
     function labelToTag(label) {
@@ -671,7 +745,8 @@
         id: state.nextId++,
         label,
         tag: state.autoTag ? labelToTag(label) : "",
-        manualTag: false
+        manualTag: false,
+        enabled: true
       };
       state[hand].push(note);
       state.notes[note.id] = new Set();
@@ -686,8 +761,9 @@
       container.innerHTML = "";
       state[hand].forEach(note => {
         const row = document.createElement("div");
-        row.className = "map-row";
+        row.className = note.enabled ? "map-row" : "map-row disabled";
         row.innerHTML = `
+          <input type="checkbox" class="map-enabled" data-id="${note.id}" ${note.enabled ? "checked" : ""} aria-label="Enable ${note.label}" />
           <button class="mini" data-action="sharp" data-id="${note.id}">#</button>
           <input type="text" class="map-label" data-id="${note.id}" value="${note.label}" />
           <input type="text" class="map-tag" data-id="${note.id}" value="${note.tag}" />
@@ -699,7 +775,7 @@
 
     function renderLabels(hand, container) {
       container.innerHTML = "";
-      state[hand].forEach(note => {
+      state[hand].filter(note => note.enabled).forEach(note => {
         const row = document.createElement("div");
         row.textContent = note.label;
         container.appendChild(row);
@@ -726,7 +802,7 @@
       const totalTicks = state.bars * state.ticksPerBar;
       container.style.setProperty("--cols", totalTicks);
       container.innerHTML = "";
-      state[hand].forEach(note => {
+      state[hand].filter(note => note.enabled).forEach(note => {
         for (let tick = 0; tick < totalTicks; tick++) {
           const cell = document.createElement("button");
           cell.className = "cell";
@@ -745,7 +821,7 @@
 
     function countNotes(hand) {
       let total = 0;
-      state[hand].forEach(note => {
+      state[hand].filter(note => note.enabled).forEach(note => {
         total += state.notes[note.id] ? state.notes[note.id].size : 0;
       });
       return total;
@@ -759,7 +835,7 @@
     function updateOutput() {
       const lines = [];
       const totalTicks = state.bars * state.ticksPerBar;
-      const orderedNotes = [...state.highNotes, ...state.lowNotes];
+      const orderedNotes = [...state.highNotes, ...state.lowNotes].filter(note => note.enabled);
       let lastTick = -1;
       lines.push(
         `execute if score ${state.scoreHolder} ${state.scoreObjective} matches 0 run scoreboard players set ${state.scoreHolder} ${state.scoreObjective} ${state.startTick}`
@@ -817,6 +893,11 @@
       if (!id) return;
       const note = state[hand].find(item => item.id === id);
       if (!note) return;
+      if (event.target.classList.contains("map-enabled")) {
+        note.enabled = event.target.checked;
+        renderAll();
+        return;
+      }
       if (event.target.classList.contains("map-label")) {
         note.label = event.target.value.trim();
         if (state.autoTag && !note.manualTag) {
@@ -1008,6 +1089,9 @@
         }
         if (!targetId) return;
         const noteObj = findNoteById(targetId);
+        if (noteObj && !noteObj.enabled) {
+          noteObj.enabled = true;
+        }
         if (noteObj && entry.tag.includes("piano_note_") && entry.tag.includes("s")) {
           const sharpLabel = tagToLabel(entry.tag);
           if (sharpLabel && !noteObj.label.includes("#")) {
@@ -1030,19 +1114,9 @@
     function init() {
       const loaded = loadState();
       if (!loaded) {
-        const highBottomToTop = [
-          "C2", "D2", "E2", "F4",
-          "G3", "A3", "B3",
-          "C3", "D3", "E3", "F3",
-          "G4", "A4", "B4",
-          "C4", "D4", "E4", "F4"
-        ];
-        const lowTopToBottom = [
-          "C2", "B2", "A2", "G2",
-          "F2", "E1", "D1", "C1",
-          "B1", "A1", "G1", "F1"
-        ];
-        highBottomToTop.slice().reverse().forEach(note => addNote("highNotes", note));
+        const highTopToBottom = buildNoteRange("F4", "C2");
+        const lowTopToBottom = buildNoteRange("C2", "F0");
+        highTopToBottom.forEach(note => addNote("highNotes", note));
         lowTopToBottom.forEach(note => addNote("lowNotes", note));
       }
       renderAll();
