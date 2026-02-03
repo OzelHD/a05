@@ -11,3 +11,6 @@ execute as @p[x=-77,y=-25,z=-98,dx=7,dy=20,dz=20] run data modify entity @e[type
 
 # Mirror player equipment (items only, no extra data)
 execute as @p[x=-77,y=-25,z=-98,dx=7,dy=20,dz=20] run function a05:mirror/sync_equipment
+
+# Mirror player pose (limited to mannequin-valid poses)
+execute as @p[x=-77,y=-25,z=-98,dx=7,dy=20,dz=20] run function a05:mirror/sync_pose
